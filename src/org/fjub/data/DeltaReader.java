@@ -14,7 +14,7 @@ public class DeltaReader {
                
         Import h = new Import();
         
-        h.setHandhistory();
+        h.importHandHistory();
         System.out.println(h.getCountHands()+ "......Hände eingelesen");
         System.out.println("Hand 1-----------EXAMPLE-----------");
         //System.out.println(h.getHandhistory()[1]);

@@ -1,110 +1,72 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.fjub.test;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import org.fjub.data.hhreader.Hand;
 
-/**
- * INTERFACE 
- * --------------------------------------
- */
-interface Hand <T> {
-    
-
-    String dateTime = "";
-    String game = "";
-    Double smallBlind = 0.0;
-    Double bigBlind = 0.0;
-    int handNbr = 0;
-    int seatMax = 0;
-    int useSeats = 0;
-
-    public T getid();
-
-    public T getdateTime();
-
-    public T getgame();
-
-    public T getsmallBlind();
-
-    public T getbigBlind();
-
-    public T gethandNbr();
-
-    public T getseatMax();
-
-    public T getuseSeats();
- 
-}
-//---------------------------------------
-/**
- * FACTORY
- * 
- */
 public class handfactory {
-    
-    public static Hand getDog(String criteria)
-  {
-    if ( criteria.equals("small") )
-      return new swcHand();
-    else if ( criteria.equals("big") )
-      return new swcHand();
-    else if ( criteria.equals("working") )
-      return new swcHand();
 
-    return null;
-  }
-    
+    List<String> handHistory = null;            // Zwischenablage der importierten Hände
+    Hand hand = null;
+    int countImports;
+    File inputfile;
+    BufferedReader reader;
+    String filename = "HH20140319 1 Chip - Table 3.txt";
+    String pathToHistory = "C:/Users/Fjubuu/Desktop/swc_client-Windows v0.2.18/handhistories/";
+
+    public handfactory() {
+
+        this.countImports = 0;
+        this.handHistory = new ArrayList<>();
+    }
+
+    public void importHandHistory() {
+        String makeHandStr = null;   // Zusammengesetzer String
+        String line = "";   // Inhalt-Linie
+        int row = 0;        // Zeile-Nummer
+
+        try {
+            // File Einlesen
+            inputfile = new File(pathToHistory + filename);
+            reader = new BufferedReader(new FileReader(inputfile));
+            // CHECK1 HANDHISTORY TODO
+            while ((line = reader.readLine()) != null) {
+                // Wenn Hand# gefunden einmal in handHistory abspeichern
+                if (line.contains("Hand #") && row != 0) {
+                    countImports += 1;
+                    // Test: Integrate Hand Class
+                    // CHECK2 HAND TODO
+                    handHistory.add(makeHandStr);
+                    makeHandStr = null;
+                    row = 0;
+                }
+                // Solange keine Leerzeilen String erweitern mit Zeilenumbruch
+                if (!line.isEmpty()) {
+                    if (row == 0) {
+                        makeHandStr = makeHandStr + line;
+                    } else {
+                        makeHandStr = makeHandStr + "\r\n" + line;
+                    }
+                    row += 1;
+                }
+            }
+            reader.close();
+
+        } catch (IOException e) {
+            System.out.println("Fehler" + e);
+        }
+    }
+
 }
 
 /**
  * CLASS 1 IMPLEMENTS INTERFACE
- * 
+ *
  */
-class swcHand implements Hand <String>
-{
+class swcHand {
 
-    @Override
-    public String getid() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String getdateTime() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String getgame() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String getsmallBlind() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String getbigBlind() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String gethandNbr() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String getseatMax() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String getuseSeats() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
- 
 }

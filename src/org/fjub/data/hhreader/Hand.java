@@ -5,236 +5,226 @@
  */
 package org.fjub.data.hhreader;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Hand {
+
+    private String hand[] = null;
+    // init tableinfos
+    private String site = null;
+    private String game = null;
+    private int tableSize = 0;
     final int MAX_SEATS = 10;
-    String pokerroom = "";
-    String tablename = "";
-    String hand[] = null;
-    String hand_ID = "";
-    String hand_DateTime = "";
-    String hand_Game = "";
-    String hand_StakeMin = "";
-    String hand_StakeMax = "";
-    String hand_BuyIn = "";
-    String hand_Fee = "";
-    String hand_smallBlind;
-    String hand_bigBlind;
-    String hand_Tablename = "";
-    Player player[] = null;
-    int hand_number = 0;
-    int hand_seatMax = 0;
-    private int numberofSeats;
+    private String hand_ID = null;
+    private int hand_nbr = 0;
+    private String date = null;
+    private String time = null;
+    private int minBuyin = 0;
+    private int maxBuyin = 0;
 
     public Hand(String h) {
         this.hand = h.split("\\r?\\n");
+        formatCheck();
+        initNL();
+        System.out.println("Hand ID     = " + getHand_ID());
+        System.out.println("Hand number = " + getHand_nbr());
+        System.out.println("Date        = " + getDate());
+        System.out.println("Time        = " + getTime());
+        System.out.println("MaxBuyin    = " + getMaxBuyin());
+        System.out.println("MinBuyin    = " + getMinBuyin());
+        System.out.println("Seite       = " + getSite());
+        System.out.println("Spielart    = " + getGame());
+        System.out.println("Tischgröße  = " + getTableSize());
+
     }
 
-    private boolean checkHand() {
+    public void formatCheck() {
         boolean check = true;
-
-        // Check Line 1 Hand&nbsp#
-        // Check HandID Starts Number at 7 and Ends Charnummber 17/18/19
-        if (!isInteger(hand[0].substring(7))) {
-            check = false;
-        }
-        // Check DateTime Format
-
-        return false;
-    }
-
-    public void init1() {
-        // Line 1 - Example Hand #20742523-2 - 2014-03-18 20:45:45
-
-        int counter = 0;
-        int EndofHandID = 0;
-        int StartOfHandNbr = 0;
-        String ISO_8601 = "";
-        String Time = "";
-
-        for (int i = 0; i < hand[0].length(); i++) {
-            // Line 1
-            if (hand[0].charAt(i) == ' ') {
-                counter++;          // Begins with 1
-                switch (counter) {
-                    case 1:
-                    case 2:
-                        EndofHandID = i;
-                    case 3:
-                        ISO_8601 = hand[0].substring(i + 1, i + 11);
-                    case 4:
-                        Time = hand[0].substring(i + 1, i + 9);
-                    default:
-                }
-            }
-            if (hand[0].charAt(i) == '-') {
-                if (counter < 2) {
-                    StartOfHandNbr = i + 1;
-                }
+        for (int v = 0; v < hand.length; v++) {
+            if (!(hand[v].contains("#") && hand[v].contains("-")) && hand[v].contains("Hand")) {
+                System.out.println("hh_convert_Error_item_1_line_conistenz " + hand[v]);
             }
         }
-
-        hand_ID = hand[0].substring(6, EndofHandID);
-        hand_number = Integer.parseInt(hand[0].substring(StartOfHandNbr, EndofHandID));
-        hand_DateTime = ISO_8601 = ISO_8601 + "T" + Time;
-
-        System.out.println("Hand: " + hand_ID);
-        System.out.println("Handnummer: " +hand_number);
-        System.out.println("DateTime: " +hand_DateTime);
     }
 
-    public void init2() {
-        // Line 2 Example Game: NL Hold'em (0.95+0.05) - Blinds 10/20
-
-        boolean tourney = false;
-        int counter = 0;
-        int StartOfGame = 0;
-        int EndOfGame = 0;
-        int StartOfStackMin = 0;
-        int EndOfStackMin =0;
-        int StartOfBuyin = 0;
-        int EndOfBuyin = 0;
-        int StartOfStackMax = 0;
-        int EndOfStackMax = 0;
-        int StartOfFee = 0;
-        int EndOfFee = 0;
-        int StartOfsmallBlinds = 0;
-        int EndOfsmallBlinds = 0;
-        int StartOfbigBlinds = 0;
-        
-        for (int i = 0; i < hand[1].length(); i++) {
-            // Line 1
-            if (hand[1].charAt(i) == ' ') {
-                counter++;          // Begins with 1
-                switch (counter) {
-                    case 1:             StartOfGame = i + 1;
-                    case 2:             EndOfGame = i;
-                    case 3:             
-                    case 4:             EndOfStackMin = i; StartOfStackMax= i + 2;
-                    case 5:             
-                    case 6:             StartOfsmallBlinds=i+1;
-                    default:
-                }
-            }
-            if (hand[1].charAt(i) == '(') {
-                    StartOfBuyin    = i + 1;
-                    StartOfStackMin = i + 1;           
-            }
-            if (hand[1].charAt(i) == ')') {
-                    EndOfFee    = i;
-                    EndOfStackMax = i + 1;           
-            }
-            if (hand[1].charAt(i) == '+') {
-                    tourney = true;
-                    EndOfBuyin    = i;
-                    StartOfFee    = i + 1;          
-            }
-            if (hand[1].charAt(i) == '/') {                   
-                EndOfsmallBlinds = i;
-                StartOfbigBlinds = i+1;
-            }
-        }
-
-        hand_Game           = hand[1].substring(StartOfGame, EndOfGame);
-        if(tourney==false){
-        hand_StakeMin       = hand[1].substring(StartOfStackMin, EndOfStackMin);
-        hand_StakeMax       = hand[1].substring(StartOfStackMax, EndOfStackMax);
-        }
-        hand_BuyIn          = hand[1].substring(StartOfBuyin, EndOfBuyin);;
-        hand_Fee            = hand[1].substring(StartOfFee, EndOfFee);;
-        hand_smallBlind     = hand[1].substring(StartOfsmallBlinds, EndOfsmallBlinds);
-        hand_bigBlind       = hand[1].substring(StartOfbigBlinds);
-
-        System.out.println("Game: " + hand_Game);
-        System.out.println("StakeMin: " +hand_StakeMin);
-        System.out.println("StakeMax: " +hand_StakeMax);
-        System.out.println("BuyIn: " +hand_BuyIn);
-        System.out.println("Fee: " +hand_Fee);
-        System.out.println("smallBlind: " +hand_smallBlind);
-        System.out.println("bigBlind: " +hand_bigBlind);
-    }
-
-    public void init3() {
-         // Line 3 Example Site: Seals With Clubs
-        pokerroom = hand[2].substring(6);       
-        System.out.println("Seite: " + pokerroom);
-        
-    }
-
-    public void init4() {
-        // Line 4 Example Site: Table: 1 Chip - Table 3
-        tablename = hand[3].substring(7);
-        System.out.println("Tisch: " + tablename);
-    }
-
-    public void init5() {
-        int seats = 0;
-        for(int i = 4;i < MAX_SEATS + 4; i++){
-            // Anzahl Sitze
-            if(hand[i].contains("Seat")){
-            seats++;
-            
-            }           
-        }
-        numberofSeats=seats;
-        System.out.println("SEATS = " +seats);
-       // System.out.println(hand[4]);
-       // System.out.println(hand[5]);
-       // System.out.println(hand[6]);
-       // System.out.println(hand[7]);
-        //System.out.println(hand[8]);
-       // System.out.println(hand[9]);
-       // System.out.println(hand[10]);
-        
-    }
-
-    public void init6() {
-        // System.out.println(hand[4+numberofSeats]);
-    }
-
-    public void setHand_Game(String hand_Game) {
-        this.hand_Game = hand_Game;
-    }
-
-    public String getHand_StakeMin() {
-        return hand_StakeMin;
-    }
-
-    public void setHand_StakeMin(String hand_StakeMin) {
-        this.hand_StakeMin = hand_StakeMin;
-    }
-
-    public String getHand_StakeMax() {
-        return hand_StakeMax;
-    }
-
-    public void setHand_StakeMax(String hand_StakeMax) {
-        this.hand_StakeMax = hand_StakeMax;
-    }
-
-
-    public String getHand_Tablename() {
-        return hand_Tablename;
-    }
-
-    public void setHand_Tablename(String hand_Tablename) {
-        this.hand_Tablename = hand_Tablename;
-    }
-
-    public int getHand_seatMax() {
-        return hand_seatMax;
-    }
-
-    public void setHand_seatMax(int hand_seatMax) {
-        this.hand_seatMax = hand_seatMax;
-    }
-
-    public static boolean isInteger(String str) {
+    public void initNL() {
+        List<String> items = Arrays.asList(hand[0].split("\\s+"));
+        int start = 0;
+        int end = 0;
+        // Line 1 -------------------------------------------
         try {
-            Integer.parseInt(str);
-            return true;
-        } catch (NumberFormatException nfe) {
-            return false;
+            for (int z = 0; z < items.get(1).length(); z++) {
+                if (items.get(1).charAt(z) == '#') {
+                    start = z;
+                }
+                if (items.get(1).charAt(z) == '-') {
+                    end = z;
+                }
+            }
+
+            setHand_nbr(Integer.parseInt(items.get(1).substring(end + 1)));
+            if (items.get(1).substring(start + 1, end).length() == 8) {
+                setHand_ID(items.get(1).substring(start + 1, end));
+            } else {
+                throw new ErrorHRead("hh_convert_Error_item_1_HandID_length " + items.get(1).substring(start + 1, end - 1));
+            }
+            if (items.get(3).length() == 10) {
+                setDate(items.get(3));
+            } else {
+                throw new ErrorHRead("hh_convert_Error_item_3_date_format" + items.get(3));
+            }
+            if (items.get(4).length() == 8) {
+                setTime(items.get(4));
+            } else {
+                throw new ErrorHRead("hh_convert_Error_item_4_time_format " + items.get(4).length());
+            }
+        } catch (ErrorHRead err) {
+            System.out.println(err.getMessage());
         }
+        // Line 2 -------------------------------------------
+        items = Arrays.asList(hand[1].split("\\s+"));
+
+        try {
+            // String temp = items.get(3) + items.get(5);
+            if (items.get(3).contains("(") && items.get(5).contains(")")) {
+                setMinBuyin(Integer.parseInt(items.get(3).replaceAll("\\W", "")));
+                setMaxBuyin(Integer.parseInt(items.get(5).replaceAll("\\W", "")));
+            } else {
+                throw new ErrorHRead("hh_convert_Error_item_4&5_min_max_buyin ");
+            }
+        } catch (ErrorHRead err) {
+            System.out.println(err.getMessage());
+        }
+        // Line 3 -------------------------------------------
+        try {
+            if (hand[2].contains("Seals With Clubs")) {
+                setSite("Seals With Clubs");
+            } else {
+                throw new ErrorHRead("hh_convert_Error_item_4&5_min_max_buyin 232");
+            }
+        } catch (ErrorHRead err) {
+            System.out.println(err.getMessage());
+        }
+        // Line 4 -------------------------------------------
+        items = Arrays.asList(hand[3].split("\\s+"));
+
+        try {
+            switch (items.get(2)) {
+                case "6max":
+                    setTableSize(6);
+                    break;
+                case "9max":
+                    setTableSize(9);
+                    break;
+                case "HU":
+                    setTableSize(2);
+                    break;
+                default:
+                    throw new ErrorHRead("hh_convert_Error_item_2_TableSize_");
+
+            }
+            if (items.get(1).contains("NLHE")) {
+                setGame("NoLimit");
+            } else {
+                throw new ErrorHRead("hh_convert_Error_item_1_Game_");
+            }
+        } catch (ErrorHRead err) {
+            System.out.println(err.getMessage());
+        }
+
+        // Line 5 -------------------------------------------
+        end = 0;
+        for (int i = 4; i <= MAX_SEATS + 4; i++) {
+            // Anzahl Sitze
+            if (hand[i].contains("Seat")) {
+                end++;
+                System.out.println(hand[i]);
+
+            }
+        }
+
+        System.out.println("----------------------");
+
+        items = null;
     }
+
+    public String getSite() {
+        return site;
+    }
+
+    public String getGame() {
+        return game;
+    }
+
+    public void setGame(String game) {
+        this.game = game;
+    }
+
+    public int getTableSize() {
+        return tableSize;
+    }
+
+    public void setTableSize(int tableSize) {
+        this.tableSize = tableSize;
+    }
+
+    public void setSite(String site) {
+        this.site = site;
+    }
+
+    public String getHand_ID() {
+        return hand_ID;
+    }
+
+    public void setHand_ID(String hand_ID) {
+        this.hand_ID = hand_ID;
+    }
+
+    public int getHand_nbr() {
+        return hand_nbr;
+    }
+
+    public void setHand_nbr(int hand_nbr) {
+        this.hand_nbr = hand_nbr;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public int getMinBuyin() {
+        return minBuyin;
+    }
+
+    public void setMinBuyin(int minBuyin) {
+        this.minBuyin = minBuyin;
+    }
+
+    public int getMaxBuyin() {
+        return maxBuyin;
+    }
+
+    public void setMaxBuyin(int maxBuyin) {
+        this.maxBuyin = maxBuyin;
+    }
+
+    public String[] getHand() {
+        return hand;
+    }
+    
+    
 
 }
