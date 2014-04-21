@@ -15,7 +15,7 @@ public class DeltaReader {
         Import h = new Import();
         
         NewClass ts = new NewClass();
-        ts.startmain();
+        ts.listOpenWindows();
         
         h.importHandHistory();
        //System.out.println(h.getCountHands()+ "......Hände eingelesen");
