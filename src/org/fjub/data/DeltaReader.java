@@ -10,13 +10,15 @@ public class DeltaReader {
     public static void main(String[] args) {
         
         view con = new view();
-        con.setVisible(false);
+        con.setVisible(true);
                
         Import h = new Import();
         
+        NewClass ts = new NewClass();
+        ts.startmain();
+        
         h.importHandHistory();
-        System.out.println(h.getCountHands()+ "......Hände eingelesen");
-        System.out.println("Hand 1-----------EXAMPLE-----------");
+       //System.out.println(h.getCountHands()+ "......Hände eingelesen");
         //System.out.println(h.getHandhistory()[1]);
         
 

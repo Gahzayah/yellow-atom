@@ -6,9 +6,6 @@
 
 package org.fjub.data.hhreader;
 
-import java.sql.Array;
-import java.util.List;
-
 /**
  *
  * @author MaHi
