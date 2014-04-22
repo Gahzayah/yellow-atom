@@ -14,7 +14,7 @@ public class DeltaReader {
                
         Import h = new Import();
         
-        NewClass ts = new NewClass();
+        JNAHandler ts = new JNAHandler();
         ts.listOpenWindows();
         
         h.importHandHistory();
