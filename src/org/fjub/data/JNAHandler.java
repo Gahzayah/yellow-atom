@@ -1,16 +1,15 @@
 package org.fjub.data;
 
 import com.sun.jna.Native;
-import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.GDI32;
 import com.sun.jna.platform.win32.WinUser.WNDENUMPROC;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.platform.win32.WinDef.HWND; 
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinUser; 
-import com.sun.jna.platform.win32.WinUser.*; 
+ 
+
 
 
 public class JNAHandler {
